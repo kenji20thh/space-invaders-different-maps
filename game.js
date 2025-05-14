@@ -11,7 +11,7 @@ let shootCooldown = 0
 let alienShootCooldown = 0
 let gameLoopId = null
 let timerInterval = null; // Store the timer interval ID
-
+let level = 1
 
 // Game elements
 let player
@@ -97,6 +97,41 @@ const createAliens = () => {
     }
 
 }
+
+const createAliens2 = () => {
+    aliens = []
+    const startX = (width - 10 * (40 + 10)) / 2 //(gamewidth - columns * (alienWidth + alien paddin)) / 2
+    const startY = 50
+    for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 10; j++) {
+            const alien = document.createElement("div")
+            alien.className = "alien" + (i + 1)
+            alien.style.left = `${startX + j * (40 + 10)}px` // 10 = padding
+            alien.style.top = `${startY + i * (30 + 10)}px`
+            gameArea.appendChild(alien)
+            aliens.push(alien)
+        }
+    }
+
+}
+
+const createAliens3 = () => {
+    aliens = []
+    const startX = (width - 10 * (40 + 10)) / 2 //(gamewidth - columns * (alienWidth + alien paddin)) / 2
+    const startY = 50
+    for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 10; j++) {
+            const alien = document.createElement("div")
+            alien.className = "alien" + (i + 1)
+            alien.style.left = `${startX + j * (40 + 10)}px` // 10 = padding
+            alien.style.top = `${startY + i * (30 + 10)}px`
+            gameArea.appendChild(alien)
+            aliens.push(alien)
+        }
+    }
+
+}
+
 
 const updateStats = () => {
     scoreElem.textContent = score
@@ -265,8 +300,10 @@ const checkCollisions = () => {
                 score += 10
                 updateStats()
                 if (aliens.length === 0) {
+                    level++
                     timeRemaining += 20 
-                    createAliens()
+                    if (level === 2) createAliens2()
+                    else if (level === 3) createAliens3()
                     score += 50
                     updateStats()
                 }
