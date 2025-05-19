@@ -103,7 +103,13 @@ const startNextLevel = () => {
 
   // If we're continuing to a new level, create new aliens
   if (aliens.length === 0) {
-    createAliens()
+    if (currentLevel === 1) {
+      createAliens()
+    } else if (currentLevel === 2) {
+      createAliens2()
+    } else if (currentLevel === 3) {
+      createAliens3()
+    }
   }
 
   if (!gameLoopId) {
@@ -152,8 +158,45 @@ const createAliens = () => {
       alien.className = "alien" + (i + 1)
       alien.style.left = `${startX + j * (40 + 10)}px`
       alien.style.top = `${startY + i * (30 + 10)}px`
-      // Store the level this alien belongs to for movement speed
-      alien.dataset.level = currentLevel
+      // Level 1 aliens have speed 1
+      alien.dataset.speed = "1"
+      gameArea.appendChild(alien)
+      aliens.push(alien)
+    }
+  }
+}
+
+// Add these new functions for level 2 and 3 aliens
+const createAliens2 = () => {
+  aliens = []
+  const startX = (width - 10 * (40 + 10)) / 2
+  const startY = 50
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 10; j++) {
+      const alien = document.createElement("div")
+      alien.className = "alien" + (i + 1)
+      alien.style.left = `${startX + j * (40 + 10)}px`
+      alien.style.top = `${startY + i * (30 + 10)}px`
+      // Level 2 aliens have speed 2
+      alien.dataset.speed = "2"
+      gameArea.appendChild(alien)
+      aliens.push(alien)
+    }
+  }
+}
+
+const createAliens3 = () => {
+  aliens = []
+  const startX = (width - 10 * (40 + 10)) / 2
+  const startY = 50
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 10; j++) {
+      const alien = document.createElement("div")
+      alien.className = "alien" + (i + 1)
+      alien.style.left = `${startX + j * (40 + 10)}px`
+      alien.style.top = `${startY + i * (30 + 10)}px`
+      // Level 3 aliens have speed 3
+      alien.dataset.speed = "3"
       gameArea.appendChild(alien)
       aliens.push(alien)
     }
@@ -226,9 +269,6 @@ const moveAliens = () => {
   let moveDown = false
   let changeDirection = false
 
-  // Calculate speed multiplier based on current level
-  const speedMultiplier = currentLevel
-
   for (const alien of aliens) {
     if (alienDirection > 0 && Number.parseInt(alien.style.left) > width - 60) {
       changeDirection = true
@@ -250,8 +290,9 @@ const moveAliens = () => {
         break
       }
     }
-    // Apply speed multiplier based on level
-    alien.style.left = `${Number.parseInt(alien.style.left) + speedMultiplier * alienDirection}px`
+    // Use the speed stored in the alien's dataset
+    const speed = Number(alien.dataset.speed || 1)
+    alien.style.left = `${Number.parseInt(alien.style.left) + speed * alienDirection}px`
   }
 
   if (changeDirection) {
@@ -275,7 +316,7 @@ const resetAliens = () => {
 const updateBullets = () => {
   for (let i = bullets.length - 1; i >= 0; i--) {
     const bullet = bullets[i]
-    bullet.style.top = `${Number.parseInt(bullet.style.top) - 7}px` // 7 = bullet speed
+    bullet.style.top = `${Number.parseInt(bullet.style.top) - 20}px` // 7 = bullet speed
     if (Number.parseInt(bullet.style.top) < 0) {
       // off scrreen remove
       gameArea.removeChild(bullet)
@@ -299,7 +340,7 @@ const shoot = () => {
   bullet.style.top = `${height - 50}px`
   gameArea.appendChild(bullet)
   bullets.push(bullet)
-  shootCooldown = 400
+  shootCooldown = 50
 }
 
 const alienShoot = () => {
@@ -337,6 +378,7 @@ const checkCollisions = () => {
           timeRemaining += 20
           currentLevel++
 
+          levelStarted = false
           if (currentLevel <= maxLevels) {
             // Show next level screen
             showLevelScreen(currentLevel)
@@ -451,7 +493,7 @@ const resetGame = () => {
 
   // Show level 1 screen instead of starting immediately
   createPlayer()
-  createAliens()
+  createAliens() // Always start with level 1 aliens
   score = 0
   lives = 3
   timeRemaining = 120
@@ -463,7 +505,7 @@ const resetGame = () => {
 
 window.addEventListener("load", () => {
   createPlayer()
-  createAliens()
+  createAliens() // Always start with level 1 aliens
   score = 0
   lives = 3
   timeRemaining = 120
